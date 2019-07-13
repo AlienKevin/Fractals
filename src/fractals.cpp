@@ -2,6 +2,12 @@
 using namespace std;
 
 void drawSierpinskiTriangle(GWindow& window, double x, double y, double size, int order) {
+    if (x < 0 || y < 0) {
+        throw "x, y coordinates must be greater than or equal to 0!";
+    }
+    if (size < 0) {
+        throw "Size must be greater than or equal to 0!";
+    }
     if (order == 0) {
         // do nothing
     } else if (order < 0) {
@@ -20,7 +26,6 @@ void drawSierpinskiTriangle(GWindow& window, double x, double y, double size, in
 }
 
 int floodFill(GWindow& window, int x, int y, int color) {
-    // TODO: write this function
 
     return 0;   // this is only here so it will compile
 }
