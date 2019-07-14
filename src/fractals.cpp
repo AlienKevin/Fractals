@@ -1,3 +1,8 @@
+/**
+ * Fractals assignment for CS106B in Stanford Summer Session 2019
+ * Two programs for drawing recursive graphics: Sierpinski triangles and Flood fill
+ * Author: Kevin Li
+ */
 #include "fractals.h"
 using namespace std;
 
