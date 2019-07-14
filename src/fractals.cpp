@@ -38,6 +38,14 @@ void drawSierpinskiTriangle(GWindow& window, double x, double y, double size, in
     }
 }
 
+/**
+ * @brief Fill an area of the same color with a specified color
+ * @param window the graphic window
+ * @param x the x coordinate to start filling color
+ * @param y the y coordinate to start filling color
+ * @param color the new color to fill in
+ * @return
+ */
 int floodFill(GWindow& window, int x, int y, int color) {
     if (!window.inCanvasBounds(x, y)) {
         throw "x, y coordinates outside bounds! Should be from (0, 0) to (" +
@@ -51,6 +59,16 @@ int floodFill(GWindow& window, int x, int y, int color) {
     return floodFillHelper(window, x, y, currentColor, color, 0);
 }
 
+/**
+ * @brief Helper function which does the recursion to do flood fill
+ * @param window the graphic window
+ * @param x the x coordinate to start filling color
+ * @param y the y coordinate to start filling color
+ * @param currentColor the current color of the selected pixel
+ * @param targetColor the target color user chose
+ * @param pixelsChangedColor the number of pixels that changed color
+ * @return
+ */
 int floodFillHelper(GWindow& window, int x, int y, int currentColor, int targetColor, int pixelsChangedColor) {
     window.setPixel(x, y, targetColor);
     int totalPixelsChangedColor = pixelsChangedColor;
