@@ -1,6 +1,10 @@
 #include "fractals.h"
 using namespace std;
 
+void drawSierpinskiTriangle(GWindow& window, double x, double y, double size, int order);
+int floodFill(GWindow& window, int x, int y, int color);
+int floodFillHelper(GWindow& window, int x, int y, int currentColor, int targetColor, int pixelsChangedColor);
+
 /**
  * @brief Draw a Sierpinski Triangle at (x, y) with a side length and at a specific order
  * @param window the graphic window
@@ -35,6 +39,32 @@ void drawSierpinskiTriangle(GWindow& window, double x, double y, double size, in
 }
 
 int floodFill(GWindow& window, int x, int y, int color) {
+    if (!window.inCanvasBounds(x, y)) {
+        throw "x, y coordinates outside bounds! Should be from (0, 0) to (" +
+            integerToString(window.getCanvasWidth() - 1) + ", " +
+            integerToString(window.getCanvasHeight() - 1) + ").";
+    }
+    int currentColor = window.getPixel(x, y);
+    if (currentColor == color) {
+        return 0;
+    }
+    return floodFillHelper(window, x, y, currentColor, color, 0);
+}
 
-    return 0;   // this is only here so it will compile
+int floodFillHelper(GWindow& window, int x, int y, int currentColor, int targetColor, int pixelsChangedColor) {
+    window.setPixel(x, y, targetColor);
+    int totalPixelsChangedColor = pixelsChangedColor;
+    if (window.inCanvasBounds(x - 1, y) && window.getPixel(x - 1, y) == currentColor) {
+        totalPixelsChangedColor += floodFillHelper(window, x - 1, y, currentColor, targetColor, 1);
+    }
+    if (window.inCanvasBounds(x + 1, y) && window.getPixel(x + 1, y) == currentColor) {
+        totalPixelsChangedColor += floodFillHelper(window, x + 1, y, currentColor, targetColor, 1);
+    }
+    if (window.inCanvasBounds(x, y - 1) && window.getPixel(x, y - 1) == currentColor) {
+        totalPixelsChangedColor += floodFillHelper(window, x, y - 1, currentColor, targetColor, 1);
+    }
+    if (window.inCanvasBounds(x, y + 1) && window.getPixel(x, y + 1) == currentColor) {
+        totalPixelsChangedColor += floodFillHelper(window, x, y + 1, currentColor, targetColor, 1);
+    }
+    return totalPixelsChangedColor;
 }
