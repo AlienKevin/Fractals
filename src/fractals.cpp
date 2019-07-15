@@ -7,6 +7,7 @@
 using namespace std;
 
 void drawSierpinskiTriangle(GWindow& window, double x, double y, double size, int order);
+void drawSierpinskiTriangleHelper(GWindow& window, double x, double y, double size, int order, int color, int baseColor);
 int floodFill(GWindow& window, int x, int y, int color);
 int floodFillHelper(GWindow& window, int x, int y, int currentColor, int targetColor, int pixelsChangedColor);
 
@@ -20,6 +21,29 @@ int floodFillHelper(GWindow& window, int x, int y, int currentColor, int targetC
  *        0 order will draw nothing. Negative orders will throw an error.
  */
 void drawSierpinskiTriangle(GWindow& window, double x, double y, double size, int order) {
+    int oldColor = window.getColorInt();
+    // Color schemes:
+    // 1. level color: decimal(8900331) sky blue
+    //    base color: decimal(8308816) or #7EC850 (lawn grass green)
+    // 2. create mountains with green forest
+    //    level color: decimal(11842740) or #b4b4b4 (a shade of gray)
+    //    base color: decimal(8308816) or #7EC850 (lawn grass green)
+    drawSierpinskiTriangleHelper(window, x, y, size, order, 8900331, 8308816);
+    window.setColor(oldColor);
+}
+
+/**
+ * @brief Helper function for drawing Sierpinski Triangle recursively with colors for different level
+ * @param window the grpahic window
+ * @param x x coordinate to draw the triangle
+ * @param y y coordinate to draw the triangle
+ * @param size the size of the triangle or the length of its sides
+ * @param order the order of the triangle, function will draw 3 ^ order number of triangles.
+ *        0 order will draw nothing. Negative orders will throw an error.
+ * @param levelColor the starting level color which will gradually gets darker as level increases
+ * @param baseColor the base color that fills the three downward pointing triangles when order == 1
+ */
+void drawSierpinskiTriangleHelper(GWindow& window, double x, double y, double size, int order, int levelColor, int baseColor) {
     if (x < 0 || y < 0) {
         throw "x, y coordinates must be greater than or equal to 0!";
     }
@@ -32,14 +56,16 @@ void drawSierpinskiTriangle(GWindow& window, double x, double y, double size, in
         throw "Order must be greater than or equal to 0!";
     } else if (order == 1){
         double height = sqrt(3) / 2 * size;
-        window.drawLine(x, y, x + size, y);
-        window.drawLine(x + size, y, x + size / 2, y + height);
-        window.drawLine(x + size / 2, y + height, x , y);
+        window.setColor(baseColor);
+        window.fillPolygon({x, y, x + size, y, x + size, y, x + size / 2, y + height, x + size / 2, y + height, x , y});
     } else {
+        int step = levelColor / order;
         double height = sqrt(3) / 2 * size;
-        drawSierpinskiTriangle(window, x, y, size / 2, order - 1);
-        drawSierpinskiTriangle(window, x + size / 2, y, size / 2, order - 1);
-        drawSierpinskiTriangle(window, x + size / 4, y + height / 2, size / 2, order - 1);
+        window.setColor(levelColor);
+        window.fillPolygon({x + size / 2, y, x + size / 4, y + height / 2, x + 3 * size / 4, y + height / 2});
+        drawSierpinskiTriangleHelper(window, x, y, size / 2, order - 1, levelColor - step, baseColor);
+        drawSierpinskiTriangleHelper(window, x + size / 2, y, size / 2, order - 1, levelColor - step, baseColor);
+        drawSierpinskiTriangleHelper(window, x + size / 4, y + height / 2, size / 2, order - 1, levelColor - step, baseColor);
     }
 }
 
